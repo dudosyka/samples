@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Web cam</title>
+</head>
+<body>
+	<video id="video" width="640" height="480" autoplay></video>
+	<button id="snap">Сделать снимок</button>
+	<canvas id="canvas" width="640" height="480"></canvas>
+	<script>
+		let canvas = document.getElementById('canvas');
+		let context = canvas.getContext('2d');
+		let video = document.getElementById('video');
+
+		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+			//Check micro loaded
+			navigator.mediaDevices.getUserMedia({audio: true}).catch(err => {
+					console.log('Micro blocked');
+				});
+			//Check video loaded
+			navigator.mediaDevices.getUserMedia({video: true}).catch(err => {
+					console.log('Video blocked');
+				}).then(data => {
+					video.srcObject = data;
+					video.play();
+				});
+		}
+
+		//create photo
+		document.getElementById('snap').addEventListener('click', ()=> {
+			context.drawImage(video, 0, 0, 640, 480);
+		});
+	</script>
+</body>
+</html>

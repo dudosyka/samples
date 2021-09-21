@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Drag&Drop</title>
+	<style type="text/css">
+		#drop-area {
+		  border: 2px dashed #ccc;
+		  border-radius: 20px;
+		  width: 480px;
+		  font-family: sans-serif;
+		  margin: 100px auto;
+		  padding: 20px;
+		}
+		#drop-area.highlight {
+		  border-color: purple;
+		}
+	</style>
+</head>
+<body>
+	<div id="drop-area">
+  <form class="my-form">
+    <p>Загрузите изображения с помощью диалога выбора файлов или перетащив нужные изображения в выделенную область</p>  
+    <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFile(this.files[0])">
+  </form>
+  <script type="text/javascript">
+  	let dd = document.getElementById('drop-area');
+
+  	['dragenter', 'dragover', 'dragleave', 'drop'].map(el => {
+  		dd.addEventListener(el, preventDefaults, false);
+  	});
+
+  	function preventDefaults (e) {
+  		e.preventDefault();
+  		e.stopPropagation();
+  	}
+
+  	;['dragenter', 'dragover'].map(event => {
+	  dd.addEventListener(event, highlight, false);
+	});
+	;['dragleave', 'drop'].map(event => {
+	  dd.addEventListener(event, unhighlight, false);
+	});
+
+	function highlight(e) {
+	  dd.classList.add('highlight')
+	}
+	function unhighlight(e) {
+	  dd.classList.remove('highlight')
+	}
+
+	dd.addEventListener('drop', handleDrop, false);
+
+	function getBase64Image(file) {
+	   var reader = new FileReader();
+	   reader.readAsDataURL(file);
+	   reader.onload = function () {
+	     console.log(reader.result);
+	   };
+	   reader.onerror = function (error) {
+	     console.log('Error: ', error);
+	   };
+	}
+
+	function handleFile(file) {
+		console.log(file);
+		const base64_file = getBase64Image(file);
+		localStorage.setItem('file', base64_file);
+		console.log(localStorage);
+	}
+
+	function handleDrop(e) {
+		let dt = e.dataTransfer;
+		let files = dt.files;
+		console.log(files);
+		handleFile(files[0]);
+	}
+  </script>
+</div>
+</body>
+</html>
